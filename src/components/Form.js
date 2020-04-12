@@ -1,9 +1,47 @@
 import React, { useState } from "react";
+import Error from "./Error";
+import uuid from "uuid/v4";
 
-const Form = () => {
+const Form = ({ addNewExpense }) => {
+  const [expenseName, setExpenseName] = useState("");
+  const [quantity, setQuantity] = useState(0);
+  const [error, setError] = useState(false);
+
+  // function to add an expense
+
+  const addExpense = (e) => {
+    e.preventDefault();
+
+    //Validation
+    if (quantity < 1 || isNaN(quantity) || expenseName.trim() === "") {
+      setError(true);
+      return;
+    }
+    //If validation is ok
+    setError(false);
+
+    //build the expense
+    const expense = {
+      expenseName,
+      quantity,
+      id: uuid(),
+    };
+
+    console.log(expense);
+
+    //pass the expense to the main component
+    addNewExpense(expense);
+
+    //reset form
+    setExpenseName("");
+    setQuantity(0);
+  };
+
   return (
-    <form>
+    <form onSubmit={addExpense}>
       <h2>Add your expenses here:</h2>
+
+      {error ? <Error message={"The is an error"} /> : null}
 
       <div className="campo">
         <label>Expense Name</label>
@@ -11,10 +49,18 @@ const Form = () => {
           type="text"
           className="u-full-width"
           placeholder="Ex. Transport"
+          value={expenseName}
+          onChange={(e) => setExpenseName(e.target.value)}
         />
 
         <label>Expense quantity</label>
-        <input type="number" className="u-full-width" placeholder="Ex. 300'" />
+        <input
+          type="number"
+          className="u-full-width"
+          placeholder="Ex. 300"
+          value={parseInt(quantity, 10)}
+          onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
+        />
       </div>
 
       <input
