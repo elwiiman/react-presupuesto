@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Error from "./Error";
 import uuid from "uuid/v4";
+import PropTypes from "prop-types";
 
-const Form = ({ addNewExpense }) => {
+const Form = ({ setExpense, setCreateExpense }) => {
   const [expenseName, setExpenseName] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [error, setError] = useState(false);
@@ -27,10 +28,9 @@ const Form = ({ addNewExpense }) => {
       id: uuid(),
     };
 
-    console.log(expense);
-
     //pass the expense to the main component
-    addNewExpense(expense);
+    setExpense(expense);
+    setCreateExpense(true);
 
     //reset form
     setExpenseName("");
@@ -70,6 +70,11 @@ const Form = ({ addNewExpense }) => {
       />
     </form>
   );
+};
+
+Form.propTypes = {
+  setExpense: PropTypes.func.isRequired,
+  setCreateExpense: PropTypes.func.isRequired,
 };
 
 export default Form;

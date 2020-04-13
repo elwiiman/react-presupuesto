@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Question from "./components/Question";
 import Form from "./components/Form";
+import List from "./components/List";
+import BudgetControl from "./components/BudgetControl";
 
 function App() {
   //state definition
@@ -8,10 +10,25 @@ function App() {
   const [remaining, setRemaining] = useState(0);
   const [showQuestion, setShowQuestion] = useState(true);
   const [expenses, setExpenses] = useState([]);
+  const [expense, setExpense] = useState({});
+  const [createExpense, setCreateExpense] = useState(false);
 
-  // function to add a new expense
-  const addNewExpense = (expense) => {
-    setExpenses([...expenses, expense]);
+  //effect to update the remaining
+  useEffect(() => {
+    if (createExpense) {
+      //add new expense
+      setExpenses([...expenses, expense]);
+
+      //substract of the current budget
+
+      setRemaining(remainBudget(remaining, expense));
+
+      setCreateExpense(false);
+    }
+  }, [expense, expenses, createExpense, remaining]);
+
+  const remainBudget = (remain, expense) => {
+    return remain - expense.quantity;
   };
 
   return (
@@ -28,9 +45,15 @@ function App() {
           ) : (
             <div className="row">
               <div className="one-half column">
-                <Form addNewExpense={addNewExpense} />
+                <Form
+                  setExpense={setExpense}
+                  setCreateExpense={setCreateExpense}
+                />
               </div>
-              <div className="one-half column">2</div>
+              <div className="one-half column">
+                <List expenses={expenses} />
+                <BudgetControl budget={budget} remaining={remaining} />
+              </div>
             </div>
           )}
         </div>
